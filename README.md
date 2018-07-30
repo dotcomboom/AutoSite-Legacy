@@ -11,8 +11,7 @@ AutoSite helps you keep all of your website's pages in the same basic template. 
            [#content#] - The page's content.
            
 2. Add your pages to the "in" folder.
-      The FIRST TWO LINES are reserved for the title and description, respectively. Your page's structure will be something like this:
-           
+      You can define the title and description of the page with the first two lines like so:
            <!-- Your title -->
            <!-- Your description -->
            <p>Everything under these two lines will replace [#content#] in template.html.</p>
