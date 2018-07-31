@@ -36,7 +36,8 @@ print('Gathering filenames')
 files = []
 for dirName, subdirList, fileList in os.walk('in/'):
     for filename in os.listdir(dirName):
-        files.append((dirName + "/" + filename).replace('//','/').replace('in/', '', 1))
+        if '.' in filename:
+            files.append((dirName + "/" + filename).replace('//','/').replace('in/', '', 1))
 print(files)
 outdir = Path("out/")
 if outdir.is_dir():
@@ -46,7 +47,7 @@ print('Copying includes folder to out folder')
 shutil.copytree('includes', 'out')
 
 print('Reading template')
-f = open('template.html', 'r')
+f = open('template.html', 'r', encoding="utf8")
 template = f.read()
 f.close()
 
@@ -56,7 +57,7 @@ print()
 for filename in files:
     if os.path.isfile('in/' + filename):
         print('Filename: ' + filename)
-        f = open('in/' + filename, 'r')
+        f = open('in/' + filename, 'r', encoding="utf8")
         filearray = f.readlines()
         f.close()
         
@@ -80,7 +81,7 @@ for filename in files:
 
         os.makedirs(os.path.dirname('out/' + filename), exist_ok=True)
         
-        f = open('out/' + filename, 'w')
+        f = open('out/' + filename, 'w', encoding="utf8")
         f.write(template.replace('[#content#]', content).replace('[#title#]', title).replace('[#description#]', description))
         f.close()
         print('Wrote to out/' + filename)
