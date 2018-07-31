@@ -90,5 +90,5 @@ for filename in files:
         f.write(template.replace('[#content#]', content).replace('[#title#]', title).replace('[#description#]', description))
         f.close()
         print('Wrote to out/' + filename)
-print()
+        print()
 print('Finished.')
