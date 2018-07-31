@@ -37,6 +37,7 @@ files = []
 for dirName, subdirList, fileList in os.walk('in/'):
     for filename in os.listdir(dirName):
         files.append((dirName + "/" + filename).replace('//','/').replace('in/', '', 1))
+print(files)
 outdir = Path("out/")
 if outdir.is_dir():
     print('Deleting out folder')
