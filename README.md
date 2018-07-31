@@ -19,4 +19,4 @@ AutoSite helps you keep all of your website's pages in the same basic template. 
            <p>Everything under these two lines will replace [#content#] in template.html.</p>
               
     Subfolders are not supported. Put other site files in the "includes" folder.
-3. Run the script. It won't take long. Your pages will be in the "out" folder.
+3. Run the script. How long it takes depends on how large your site is. Your pages will be in the "out" folder.
