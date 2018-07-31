@@ -3,6 +3,7 @@ import bs4, os, shutil, glob
 from bs4 import BeautifulSoup as bs
 
 print('AUTOSITE')
+print()
 
 template = Path('template.html')
 if template.is_file():
@@ -28,22 +29,14 @@ else:
     print('includes folder does not exist, creating one..')
     os.mkdir("includes")
 
+print()
+print('When you are ready to begin, press enter.')
+input()
+print('Gathering filenames')
 files = []
 for dirName, subdirList, fileList in os.walk('in/'):
     for filename in os.listdir(dirName):
         files.append((dirName + "/" + filename).replace('//','/').replace('in/', '', 1))
-        
-pages = len(files)
-if pages == 1:
-    print('There is 1 page in the in folder.')
-else:
-    print('There are ' + str(pages) + ' pages in the in folder.')
-if pages == 0:
-    print('Please put some pages in the in folder.')
-
-print()
-print('When you are ready to begin, press enter.')
-input()
 outdir = Path("out/")
 if outdir.is_dir():
     print('Deleting out folder')
