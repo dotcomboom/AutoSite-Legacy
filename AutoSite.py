@@ -1,5 +1,5 @@
 from pathlib import Path
-import bs4, os, shutil
+import bs4, os, shutil, glob
 from bs4 import BeautifulSoup as bs
 
 print('AUTOSITE')
@@ -27,9 +27,13 @@ if includes.is_dir():
 else:
     print('includes folder does not exist, creating one..')
     os.mkdir("includes")
-    
-# https://stackoverflow.com/a/2632251
-pages = len([name for name in os.listdir('in') if os.path.isfile(os.path.join('in', name))])
+
+files = []
+for dirName, subdirList, fileList in os.walk('in/'):
+    for filename in os.listdir(dirName):
+        files.append((dirName + "/" + filename).replace('//','/').replace('in/', '', 1))
+        
+pages = len(files)
 if pages == 1:
     print('There is 1 page in the in folder.')
 else:
@@ -55,7 +59,7 @@ f.close()
 print('Going through input files')
 print()
 
-for filename in os.listdir('in'):
+for filename in files:
     if os.path.isfile('in/' + filename):
         print('Filename: ' + filename)
         f = open('in/' + filename, 'r')
@@ -80,6 +84,8 @@ for filename in os.listdir('in'):
             
         content = ''.join(filearray)
 
+        os.makedirs(os.path.dirname('out/' + filename), exist_ok=True)
+        
         f = open('out/' + filename, 'w')
         f.write(template.replace('[#content#]', content).replace('[#title#]', title).replace('[#description#]', description))
         f.close()
