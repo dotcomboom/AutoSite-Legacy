@@ -1,5 +1,6 @@
 # AutoSite
 AutoSite helps you keep all of your website's pages in the same basic template. Managing a navigation bar, a footer, and even meta/OpenGraph tags across several pages is simple.
+### [You can try AutoSite right in your browser!](https://repl.it/@dotcomboom/AutoSite)
 ## Prerequisites
    - Python 3
    - BeautifulSoup 4 (pip3 install beautifulsoup4)
