@@ -1,5 +1,5 @@
 from pathlib import Path
-import bs4, os, shutil, glob
+import os, shutil
 from bs4 import BeautifulSoup as bs
 
 print('AUTOSITE')
@@ -21,7 +21,7 @@ if indir.is_dir():
 else:
     print('in folder does not exist, creating one..')
     os.mkdir("in")
-    
+
 includes = Path("includes/")
 if includes.is_dir():
     print('includes folder exists.')
@@ -37,7 +37,8 @@ files = []
 for dirName, subdirList, fileList in os.walk('in/'):
     for filename in os.listdir(dirName):
         if '.' in filename:
-            files.append((dirName + "/" + filename).replace('//','/').replace('in/', '', 1))
+            files.append((dirName + "/" + filename).replace('//', '/').replace(
+                'in/', '', 1))
 print(files)
 outdir = Path("out/")
 if outdir.is_dir():
@@ -60,7 +61,7 @@ for filename in files:
         f = open('in/' + filename, 'r', encoding="utf8")
         filearray = f.readlines()
         f.close()
-        
+
         if filearray[0].startswith('<!-- '):
             title = filearray[0].replace('<!--', '').replace('-->', '').strip()
             print('Title: ' + title)
@@ -68,21 +69,24 @@ for filename in files:
         else:
             print('First line did not have comment for title!')
             title = ""
-            
+
         if filearray[0].startswith('<!-- '):
-            description = filearray[0].replace('<!--', '').replace('-->', '').strip()
+            description = filearray[0].replace('<!--', '').replace('-->',
+                                                                   '').strip()
             print('Description: ' + description)
             filearray = filearray[1:]
         else:
             print('Second line did not have comment for description!')
             description = ""
-            
+
         content = ''.join(filearray)
 
         os.makedirs(os.path.dirname('out/' + filename), exist_ok=True)
-        
+
         f = open('out/' + filename, 'w', encoding="utf8")
-        f.write(template.replace('[#content#]', content).replace('[#title#]', title).replace('[#description#]', description))
+        f.write(
+            template.replace('[#content#]', content).replace(
+                '[#title#]', title).replace('[#description#]', description))
         f.close()
         print('Wrote to out/' + filename)
         print()
