@@ -32,12 +32,12 @@ else:
 print()
 print('When you are ready to begin, press enter.')
 input()
-print('Gathering filenames')
+print('Gathering file paths')
 files = []
 for dirName, subdirList, fileList in os.walk('in/'):
-    for filename in os.listdir(dirName):
-        if '.' in filename:
-            files.append((dirName + "/" + filename).replace('//', '/').replace(
+    for path in os.listdir(dirName):
+        if '.' in path:
+            files.append((dirName + "/" + path).replace('//', '/').replace(
                 'in/', '', 1))
 print(files)
 outdir = Path("out/")
@@ -55,10 +55,10 @@ f.close()
 print('Going through input files')
 print()
 
-for filename in files:
-    if os.path.isfile('in/' + filename):
-        print('Filename: ' + filename)
-        f = open('in/' + filename, 'r', encoding="utf8")
+for path in files:
+    if os.path.isfile('in/' + path):
+        print('Path: ' + path)
+        f = open('in/' + path, 'r', encoding="utf8")
         filearray = f.readlines()
         f.close()
 
@@ -81,13 +81,13 @@ for filename in files:
 
         content = ''.join(filearray)
 
-        os.makedirs(os.path.dirname('out/' + filename), exist_ok=True)
+        os.makedirs(os.path.dirname('out/' + path), exist_ok=True)
 
-        f = open('out/' + filename, 'w', encoding="utf8")
+        f = open('out/' + path, 'w', encoding="utf8")
         f.write(
             template.replace('[#content#]', content).replace(
-                '[#title#]', title).replace('[#description#]', description))
+                '[#title#]', title).replace('[#description#]', description).replace('[#path#]', path))
         f.close()
-        print('Wrote to out/' + filename)
+        print('Wrote to out/' + path)
         print()
 print('Finished.')
