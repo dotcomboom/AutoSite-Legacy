@@ -86,7 +86,7 @@ for path in files:
         f = open('out/' + path, 'w', encoding="utf8")
         f.write(
             template.replace('[#content#]', content).replace(
-                '[#title#]', title).replace('[#description#]', description).replace('[#path#]', path))
+                '[#title#]', title).replace('[#description#]', description).replace('[#path#]', path).replace('[#root#]', '../' * path.count('/')))
         f.close()
         print('Wrote to out/' + path)
         print()
