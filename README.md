@@ -11,6 +11,7 @@ AutoSite helps you keep all of your website's pages in the same basic template. 
            [#title#] - The title of the page.
            [#description#] - The page's description.
            [#content#] - The page's content.
+           [#path#] - The relative file path from root.
            
 2. Add your pages to the "in" folder.
       You can define the title and description of the page with the first two lines like so:
