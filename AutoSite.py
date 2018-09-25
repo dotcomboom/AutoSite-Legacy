@@ -83,10 +83,15 @@ for path in files:
 
         os.makedirs(os.path.dirname('out/' + path), exist_ok=True)
 
+        if path.count('/') == 0:
+            slash = ''
+        else:
+            slash = '/'
+
         f = open('out/' + path, 'w', encoding="utf8")
         f.write(
             template.replace('[#content#]', content).replace(
-                '[#title#]', title).replace('[#description#]', description).replace('[#path#]', path).replace('[#root#]', (('../' * path.count('/')) + '/').replace('//', '/')))
+                '[#title#]', title).replace('[#description#]', description).replace('[#path#]', path).replace('[#root#]', (('../' * path.count('/')) + slash).replace('//', '/')))
         f.close()
         print('Wrote to out/' + path)
         print()
