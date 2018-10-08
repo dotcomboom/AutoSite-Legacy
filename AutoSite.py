@@ -125,11 +125,11 @@ for path in files:
             slash = ''
         else:
             slash = '/'
+        template = template.replace('[#content#]', content).replace(
+                '[#title#]', title).replace('[#description#]', description).replace('[#path#]', path).replace('[#root#]', (('../' * path.count('/')) + slash).replace('//', '/'))
 
         f = open('out/' + path, 'w', encoding="utf8")
-        f.write(
-            template.replace('[#content#]', content).replace(
-                '[#title#]', title).replace('[#description#]', description).replace('[#path#]', path).replace('[#root#]', (('../' * path.count('/')) + slash).replace('//', '/')))
+        f.write(template)
         f.close()
         print(bcolors.BOLD + bcolors.OKGREEN + 'Wrote to out/' + path + bcolors.ENDC)
         print()
