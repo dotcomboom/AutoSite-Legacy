@@ -1,7 +1,8 @@
 from pathlib import Path
 import os, shutil
 from bs4 import BeautifulSoup as bs
-
+import subprocess
+subprocess.call('', shell=True)
 
 # https://stackoverflow.com/a/287944
 class bcolors:
