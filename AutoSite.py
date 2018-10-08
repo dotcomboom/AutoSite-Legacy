@@ -46,7 +46,7 @@ includes = Path("includes/")
 if includes.is_dir():
     print(bcolors.OKBLUE + 'includes folder exists' + bcolors.ENDC)
 else:
-    print(bcolors.OKBLUE + 'includes folder does not exist, creating one' + bcolors.ENDC)
+    print(bcolors.WARNING + 'includes folder does not exist, creating one' + bcolors.ENDC)
     os.mkdir("includes")
 
 print()
