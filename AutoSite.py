@@ -58,7 +58,9 @@ files = []
 for dirName, subdirList, fileList in os.walk('in/'):
     for path in os.listdir(dirName):
         if '.' in path:
-            files.append((dirName + "/" + path).replace('//', '/').replace(
+            if '.DS_Store' not in sitepath:
+                if 'Thumbs.db' not in sitepath:
+                    files.append((dirName + "/" + path).replace('//', '/').replace(
                 'in/', '', 1))
 print(files)
 outdir = Path("out/")
