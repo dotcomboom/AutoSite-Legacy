@@ -19,7 +19,7 @@ AutoSite helps you keep all of your website's pages in the same basic template. 
            
            <!-- Your title -->
            <!-- Your description -->
-           <!-- If desired, add an alternate template name here not including the .html extension -->
+           <!-- default -->
            <p>Everything under these three lines will replace [#content#] in template.html.</p>
               
     Put other site files in the "includes" folder.
