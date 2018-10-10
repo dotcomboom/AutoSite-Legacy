@@ -124,7 +124,7 @@ for path in files:
         os.makedirs(os.path.dirname('out/' + path), exist_ok=True)
 
         if path.count('/') == 0:
-            slash = ''
+            slash = '.'
         else:
             slash = '/'
         template = template.replace('[#content#]', content).replace(
