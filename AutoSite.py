@@ -58,9 +58,7 @@ files = []
 for dirName, subdirList, fileList in os.walk('in/'):
     for path in os.listdir(dirName):
         if '.' in path:
-            if '.DS_Store' not in path:
-                if 'Thumbs.db' not in path:
-                    files.append((dirName + "/" + path).replace('//', '/').replace(
+            files.append((dirName + "/" + path).replace('//', '/').replace(
                 'in/', '', 1))
 print(files)
 outdir = Path("out/")
@@ -78,35 +76,61 @@ for path in files:
         print(bcolors.BOLD + 'Path: ' + bcolors.ENDC + bcolors.OKBLUE + path + bcolors.ENDC)
         f = open('in/' + path, 'r', encoding="utf8")
         filearray = f.readlines()
+        contentarray = filearray
+        while contentarray[0].startswith('<!-- '):
+            contentarray = contentarray[1:]
+        content = ''.join(contentarray)
         f.close()
 
-        if filearray[0].startswith('<!-- '):
+        attribs = {'title': '', 'description': '', 'template': 'default'}
+
+        # legacy
+
+        if filearray[0].startswith('<!-- ') and not filearray[0].startswith('<!-- attrib'):
             title = filearray[0].replace('<!--', '').replace('-->', '').strip()
-            print(bcolors.BOLD + 'Title: ' + bcolors.ENDC + bcolors.OKBLUE + title + bcolors.ENDC)
+            print(bcolors.BOLD + 'Legacy Title: ' + bcolors.ENDC + bcolors.OKBLUE + title + bcolors.ENDC)
             filearray = filearray[1:]
         else:
-            print(bcolors.BOLD + 'Title: ' + bcolors.ENDC + bcolors.WARNING + 'First line did not have comment for title' + bcolors.ENDC)
+            #print(bcolors.BOLD + 'Legacy Title: ' + bcolors.ENDC + bcolors.WARNING + 'First line did not have comment for title' + bcolors.ENDC)
             title = ""
 
-        if filearray[0].startswith('<!-- '):
+        if filearray[0].startswith('<!-- ') and not filearray[0].startswith('<!-- attrib'):
             description = filearray[0].replace('<!--', '').replace('-->',
                                                                    '').strip()
-            print(bcolors.BOLD + 'Description: ' + bcolors.ENDC + bcolors.OKBLUE + description + bcolors.ENDC)
+            print(bcolors.BOLD + 'Legacy Description: ' + bcolors.ENDC + bcolors.OKBLUE + description + bcolors.ENDC)
             filearray = filearray[1:]
         else:
-            print(bcolors.WARNING + 'Second line did not have comment for description' + bcolors.ENDC)
+            #print(bcolors.WARNING + 'Second line did not have comment for description' + bcolors.ENDC)
             description = ""
 
-        if filearray[0].startswith('<!-- '):
-            template = filearray[0].replace('<!--', '').replace('-->',
-                                                                   '').strip()
-            print(bcolors.BOLD + 'Template: ' + bcolors.ENDC + bcolors.OKBLUE + template + bcolors.ENDC)
+        if filearray[0].startswith('<!-- ') and not filearray[0].startswith('<!-- attrib'):
+            template = filearray[0].replace('<!--', '').replace('-->', '').strip()
+            print(bcolors.BOLD + 'Legacy Template: ' + bcolors.ENDC + bcolors.OKBLUE + template + bcolors.ENDC)
             filearray = filearray[1:]
         else:
-            print(bcolors.BOLD + 'Template: ' + bcolors.ENDC + bcolors.WARNING + 'Using default' + bcolors.ENDC)
+            #print(bcolors.BOLD + 'Legacy Template: ' + bcolors.ENDC + bcolors.WARNING + 'Using default' + bcolors.ENDC)
             template = "default"
 
-        template = 'templates/' + template + '.html'
+        attribs['title'] = title
+        attribs['description'] = description
+        attribs['template'] = template
+
+        # handle new attributes
+        f = open('in/' + path, 'r', encoding="utf8")
+        filearray = f.readlines()
+        f.close()
+
+        while len(filearray) > 0:
+            if filearray[0].startswith('<!-- attrib '):
+                attrib = filearray[0].replace('<!-- attrib ', '').replace('-->', '').strip().split(': ')[0]
+                value = filearray[0].replace('<!-- attrib ', '').replace('-->', '').strip().split(': ')[1]
+                print(bcolors.BOLD + 'Attribute ' + attrib + ': ' + bcolors.ENDC + bcolors.OKBLUE + value + bcolors.ENDC)
+                attribs[attrib] = value
+            filearray = filearray[1:]
+
+        # cool
+
+        template = 'templates/' + attribs['template'] + '.html'
 
         if not Path(template).is_file():
             print(bcolors.WARNING + 'Creating ' + template + bcolors.ENDC)
@@ -119,16 +143,16 @@ for path in files:
         template = f.read()
         f.close()
 
-        content = ''.join(filearray)
-
         os.makedirs(os.path.dirname('out/' + path), exist_ok=True)
 
         if path.count('/') == 0:
             slash = './'
         else:
             slash = '/'
-        template = template.replace('[#content#]', content).replace(
-                '[#title#]', title).replace('[#description#]', description).replace('[#path#]', path).replace('[#root#]', (('../' * path.count('/')) + slash).replace('//', '/'))
+        template = template.replace('[#content#]', content).replace('[#path#]', path).replace('[#root#]', (('../' * path.count('/')) + slash).replace('//', '/'))
+
+        for key, value in attribs.items():
+            template = template.replace('[#' + key + '#]', value)
 
         f = open('out/' + path, 'w', encoding="utf8")
         f.write(template)
