@@ -23,4 +23,21 @@ AutoSite helps you keep all of your website's pages in the same basic template. 
            <p>Everything under the above lines will replace [#content#] in template.html.</p>
               
     Put other site files in the "includes" folder.
+    
 3. Run the script. How long it takes depends on how large your site is. Your pages will be in the "out" folder.
+## Conditional text
+Many sites have a navigation where if you're on a page, that page's name in the navigation is not a link. AutoSite has a feature that lets you replicate this. Consider the following example:
+	
+      [path!=index.html]<a href="../index.html">[/path!=]
+          Home
+      [path!=index.html]</a>[/path!=]
+	
+You can also omit the `!` symbol and it will only show if it is that page, like this:
+
+      [path=index.html]<p>[/path!=]
+          This is the index page.
+      [path=index.html]<p>[/path!=]
+	
+Conditional text is not limited to just file paths! Nearly any attribute can be used with conditional text.
+
+However, Conditional text still has some issues. You can only have one instance of conditional text per line, it is not nestable, and not multiline either.
