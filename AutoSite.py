@@ -169,7 +169,7 @@ for path in files:
 
         # [path!=pages/link.html]<a href="[#root#]pages/link.html">[/path!=]
         #    Linking
-        #[path!=pages/link.html]</a>[/path!=]
+        # [path!=pages/link.html]</a>[/path!=]
         
         # this works with any attribute.
         for atteql, value, text in re.findall(r'\[(.*)=(.*?)\](.*)\[\/\1.*\]', template):
@@ -196,8 +196,6 @@ for path in files:
                 template = template.replace('[' + atteql + value + ']' + text + '[/' + atteql + ']', text)
             else:
                 template = template.replace('[' + atteql + value + ']' + text + '[/' + atteql + ']', '')
-
-
 
         f = open('out/' + path, 'w', encoding="utf8")
         f.write(template)
