@@ -2,6 +2,7 @@ from pathlib import Path
 import os, shutil
 from bs4 import BeautifulSoup as bs
 import subprocess
+import re
 subprocess.call('', shell=True)
 
 # https://stackoverflow.com/a/287944
@@ -151,10 +152,52 @@ for path in files:
             slash = './'
         else:
             slash = '/'
-        template = template.replace('[#content#]', content).replace('[#path#]', path).replace('[#root#]', (('../' * path.count('/')) + slash).replace('//', '/'))
+
+        attribs['content'] = content
+        attribs['path'] = path
+        attribs['root'] = (('../' * path.count('/')) + slash).replace('//', '/')
+        # these still have higher priority, do them first anyway just in case
+        template = template.replace('[#content#]', attribs['content']).replace('[#path#]', attribs['path']).replace('[#root#]', attribs['root'])
 
         for key, value in attribs.items():
             template = template.replace('[#' + key + '#]', value)
+
+        # now let's handle conditional text
+        # conditional text is an experimental feature.
+        # only one is supported per line because of some regex whatever, and stuff might make it trip up
+        # example:
+
+        # [path!=pages/link.html]<a href="[#root#]pages/link.html">[/path!=]
+        #    Linking
+        #[path!=pages/link.html]</a>[/path!=]
+        
+        # this works with any attribute.
+        for atteql, value, text in re.findall(r'\[(.*)=(.*?)\](.*)\[\/\1.*\]', template):
+            atteql += '='
+            attribute = atteql.replace('!=', '').replace('=', '')
+            equals = atteql.replace(attribute, '')
+
+            trigger = False
+
+            if attribute == 'path':
+                if path == value:
+                    trigger = True
+            else:
+                for key, val in attribs.items():
+                    if key == attribute:
+                        if val == value:
+                            trigger = True
+
+            if equals == '!=':
+                trigger = not trigger
+
+            #print('[' + atteql + value + ']' + text + '[/' + atteql + ']', trigger)
+            if trigger:
+                template = template.replace('[' + atteql + value + ']' + text + '[/' + atteql + ']', text)
+            else:
+                template = template.replace('[' + atteql + value + ']' + text + '[/' + atteql + ']', '')
+
+
 
         f = open('out/' + path, 'w', encoding="utf8")
         f.write(template)
