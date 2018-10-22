@@ -1,6 +1,7 @@
 from pathlib import Path
 import os, shutil
 from bs4 import BeautifulSoup as bs
+from markdown import markdown
 import subprocess
 import re
 subprocess.call('', shell=True)
@@ -76,7 +77,10 @@ print()
 
 for path in files:
     if os.path.isfile('in/' + path):
-        print(bcolors.BOLD + 'Path: ' + bcolors.ENDC + bcolors.OKBLUE + path + bcolors.ENDC)
+        if path.endswith('.md'):
+            print(bcolors.BOLD + 'Path: ' + bcolors.ENDC + bcolors.OKBLUE + path + bcolors.ENDC + ' ==> ' + bcolors.OKBLUE + path[:-2] + 'html' + bcolors.ENDC)
+        else:
+            print(bcolors.BOLD + 'Path: ' + bcolors.ENDC + bcolors.OKBLUE + path + bcolors.ENDC)
         f = open('in/' + path, 'r', encoding="utf8")
         filearray = f.readlines()
         contentarray = filearray
@@ -84,6 +88,9 @@ for path in files:
             contentarray = contentarray[1:]
         content = ''.join(contentarray)
         f.close()
+
+        if path.endswith('.md'):
+            content = markdown(content)
 
         attribs = {'title': '', 'description': '', 'template': 'default'}
 
@@ -191,11 +198,13 @@ for path in files:
             if equals == '!=':
                 trigger = not trigger
 
-            #print('[' + atteql + value + ']' + text + '[/' + atteql + ']', trigger)
             if trigger:
                 template = template.replace('[' + atteql + value + ']' + text + '[/' + atteql + ']', text)
             else:
                 template = template.replace('[' + atteql + value + ']' + text + '[/' + atteql + ']', '')
+
+        if path.endswith('.md'):
+            path = path[:-2] + 'html'
 
         f = open('out/' + path, 'w', encoding="utf8")
         f.write(template)
