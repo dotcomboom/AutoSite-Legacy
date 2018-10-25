@@ -5,6 +5,8 @@ AutoSite helps you keep all of your website's pages in the same basic template. 
    - Python 3
    - BeautifulSoup 4 (pip3 install beautifulsoup4)
 ## Usage
+-1. Install the prerequisites with pip. `pip3 install -r requirements.txt`
+
 0. Run the script, AutoSite.py. It will create a basic `default.html` template and the `in` and `includes` folders.
 1. Edit templates/default.html, filling in with these tags:
 
@@ -22,7 +24,7 @@ AutoSite helps you keep all of your website's pages in the same basic template. 
            <!-- attrib template: default -->
            <p>Everything under the above lines will replace [#content#] in template.html.</p>
               
-    Put other site files in the "includes" folder.
+    Put other site files in the "includes" folder. Input pages can be HTML or Markdown files, and use the same attribute syntax.
     
 3. Run the script. How long it takes depends on how large your site is. Your pages will be in the "out" folder.
 ## Conditional text
