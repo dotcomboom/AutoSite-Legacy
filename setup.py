@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="AutoSite",
-    version="1.0.1",
+    version="1.0.2",
     author="dotcomboom",
     author_email="dotcomboom@protonmail.com",
     description="Keep all your website's pages under one template",
@@ -29,5 +29,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
         "Topic :: Text Processing :: Markup :: HTML"
     ],
-    scripts=['bin/AutoSite'],
+    entry_points={
+          'console_scripts': ['autosite=AutoSite.__init__:main'],
+    },
 )
