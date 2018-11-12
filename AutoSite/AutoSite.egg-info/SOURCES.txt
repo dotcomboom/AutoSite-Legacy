@@ -1,0 +1,7 @@
+README.md
+setup.py
+AutoSite/__init__.py
+AutoSite.egg-info/PKG-INFO
+AutoSite.egg-info/SOURCES.txt
+AutoSite.egg-info/dependency_links.txt
+AutoSite.egg-info/top_level.txt

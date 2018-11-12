@@ -1,0 +1,20 @@
+Metadata-Version: 2.1
+Name: AutoSite
+Version: 1.0.0
+Summary: Keep all your website's pages under one template
+Home-page: https://github.com/dotcomboom/AutoSite
+Author: dotcomboom
+Author-email: dotcomboom@protonmail.com
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Information Technology
+Classifier: Natural Language :: English
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: Public Domain
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Text Processing :: Markup :: HTML
+Description-Content-Type: text/markdown
