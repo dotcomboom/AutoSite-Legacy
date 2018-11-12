@@ -6,11 +6,11 @@ AutoSite helps you keep all of your website's pages in the same basic template. 
    - BeautifulSoup 4
    - pathlib
    - Markdown
-   
+
 ## Installation
-AutoSite can be installed and used anywhere with the command `pip3 install AutoSite`.
+AutoSite can be installed and used anywhere with the command `autosite`.
 ## Usage
-0. Run the script through `python3 -m AutoSite`. It will create a basic `default.html` template and the `in` and `includes` folders.
+0. Run `autosite`. It will create a basic `default.html` template and the `in` and `includes` folders.
 1. Edit templates/default.html, filling in with these tags:
 
            [#content#] - The page's content.
