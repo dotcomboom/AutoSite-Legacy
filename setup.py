@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="AutoSite",
-    version="1.0.0",
+    version="1.0.1",
     author="dotcomboom",
     author_email="dotcomboom@protonmail.com",
     description="Keep all your website's pages under one template",
@@ -13,6 +13,11 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/dotcomboom/AutoSite",
     packages=setuptools.find_packages(),
+    install_requires=[
+        'pathlib',
+        'bs4',
+        'markdown',
+    ],
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
@@ -24,4 +29,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
         "Topic :: Text Processing :: Markup :: HTML"
     ],
+    scripts=['bin/AutoSite'],
 )
