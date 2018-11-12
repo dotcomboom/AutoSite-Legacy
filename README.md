@@ -42,4 +42,4 @@ You can also omit the `!` symbol and it will only show if it is that page, like 
 	
 Conditional text is not limited to just file paths! Nearly any attribute can be used with conditional text.
 
-However, Conditional text still has some issues. You can only have one instance of conditional text per line, it is not nestable, and not multiline either.
+However, conditional text still has some issues. You can only have one instance of conditional text per line, it is not nestable, and not multiline either.
