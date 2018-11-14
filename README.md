@@ -37,7 +37,7 @@ AutoSite can be installed with the command `pip install autosite` or `pip3 insta
 ## Conditional text
 Many sites have a navigation where if you're on a page, that page's name in the navigation is not a link. AutoSite has a feature that lets you replicate this. Consider the following example:
 	
-      [path!=index.html]<a href="../index.html">[/path!=]
+      [path!=index.html]<a href="[#root#]index.html">[/path!=]
           Home
       [path!=index.html]</a>[/path!=]
 	
