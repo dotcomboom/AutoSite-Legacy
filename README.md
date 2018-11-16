@@ -43,9 +43,9 @@ Many sites have a navigation where if you're on a page, that page's name in the 
 	
 You can also omit the `!` symbol and it will only show if it is that page, like this:
 
-      [path=index.html]<p>[/path!=]
+      [path=index.html]<p>[/path=]
           This is the index page.
-      [path=index.html]<p>[/path!=]
+      [path=index.html]<p>[/path=]
 	
 Conditional text is not limited to just file paths! Nearly any attribute can be used with conditional text.
 
