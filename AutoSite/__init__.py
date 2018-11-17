@@ -23,9 +23,16 @@ def main():
     
     # Define arguments, help
     parser = argparse.ArgumentParser(add_help=True)
-    parser.add_argument('-p', '--prettify', action='store_true', help='Enable BeautifulSoup4 prettifying on output pages. Experimental.')
+    parser.add_argument('-p', '--prettify', action='store_true', help='enables BeautifulSoup4 prettifying on output pages (experimental)')
+    parser.add_argument('-a', '--auto', action='store_true', help='skips user input, for use in scripts etc')
+    parser.add_argument('-s', '--silent', action='store_true', help='runs completely silently, skipping user input')
     # Parse
     args = parser.parse_args()
+
+    # Disable printing and enable auto mode to console with silent argument
+    if args.silent:
+        sys.stdout = open(os.devnull, 'w')
+        args.auto = True
 
     # Set and prettify default template
     defaulttemplate = bs('<!DOCTYPE html><html><head><meta charset="utf-8"><title>[#title#]</title><meta property="og:type" content="website"><meta property="og:image" content=""><meta name="og:site_name" content="AutoSite"><meta name="og:title" content="[#title#]"><meta name="og:description" content="[#description#]"><meta name="theme-color" content="#333333"></head><body><header><h2>[#title#]</h2></header><main>[#content#]</main><footer><hr><p>Generated with AutoSite</p></footer></body></html>', "html.parser").prettify()
@@ -66,11 +73,15 @@ def main():
     if args.prettify:
         print(bcolors.BOLD + bcolors.WARNING + 'Prettifying is enabled' + bcolors.ENDC)
 
+    if args.auto:
+        print(bcolors.BOLD + bcolors.WARNING + 'User input is being skipped' + bcolors.ENDC)
+
     print()
 
-    # Ask for user input before continuing
-    print(bcolors.HEADER + bcolors.BOLD + 'When you are ready to begin, press enter.' + bcolors.ENDC)
-    input()
+    # Ask for user input before continuing if not being run with auto (silent enables auto anyway)
+    if not args.auto:
+        print(bcolors.HEADER + bcolors.BOLD + 'When you are ready to begin, press enter.' + bcolors.ENDC)
+        input()
 
     # Create template file if it doesn't exist
     if not template.is_file():
