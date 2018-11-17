@@ -173,10 +173,13 @@ def main():
             filearray = f.readlines()
             contentarray = filearray
             # Filter out attributes from contentarray
-            while contentarray[0].startswith('<!-- '):
-                contentarray = contentarray[1:]
+            if len(contentarray) > 0:
+                while contentarray[0].startswith('<!-- '):
+                    if len(contentarray) > 0:
+                        contentarray = contentarray[1:]
+                        if len(contentarray) < 1:
+                            break
             # Set the content to everything in the contentarray
-            # BUG IS HERE (if contentarray is empty, as in a file with no content and just attributes)
             content = ''.join(contentarray)
             # Close the file
             f.close()
