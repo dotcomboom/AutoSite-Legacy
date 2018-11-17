@@ -29,8 +29,9 @@ def main():
     # Blatant self-advertising
     print(bcolors.BOLD + bcolors.HEADER + bcolors.UNDERLINE + 'AUTOSITE' + bcolors.ENDC)
     print()
+    print(bcolors.BOLD + 'Path: ' + bcolors.ENDC + bcolors.HEADER + os.getcwd() + bcolors.ENDC)
 
-    # Use/create default template
+    # Use default template
     template = Path('templates/default.html')
     # Check if exists
     if template.is_file():
@@ -38,7 +39,35 @@ def main():
         print(bcolors.OKBLUE + 'templates/default.html exists' + bcolors.ENDC)
     else:
         # It doesn't
-        print(bcolors.WARNING + 'templates/default.html does not exist' + bcolors.ENDC)
+        print(bcolors.WARNING + 'templates/default.html does not exist yet' + bcolors.ENDC)
+
+    indir = Path("in/")
+    # Check if indir exists
+    if indir.is_dir():
+        # It does
+        print(bcolors.OKBLUE + 'in folder exists' + bcolors.ENDC)
+    else:
+        # It doesn't
+        print(bcolors.WARNING + 'in folder does not exist yet' + bcolors.ENDC)
+
+    includes = Path("includes/")
+    # Check if includes folder exists
+    if includes.is_dir():
+        # It does
+        print(bcolors.OKBLUE + 'includes folder exists' + bcolors.ENDC)
+    else:
+        # It doesn't
+        print(bcolors.WARNING + 'includes folder does not exist yet' + bcolors.ENDC)
+
+    print()
+
+    # Ask for user input before continuing
+    print(bcolors.HEADER + bcolors.BOLD + 'When you are ready to begin, press enter.' + bcolors.ENDC)
+    input()
+
+    # Create template file if it doesn't exist
+    if not template.is_file():
+        # It doesn't
         # Make templates directory
         os.makedirs(os.path.dirname(template), exist_ok=True)
         # Check if there is an old template.html file and migrate it
@@ -48,39 +77,25 @@ def main():
             # Copy template.html to templates/default.html
             shutil.copyfile('template.html', 'templates/default.html')
         else:
-            print(bcolors.WARNING + 'Creating one' + bcolors.ENDC)
+            print(bcolors.WARNING + 'Creating templates/default.html' + bcolors.ENDC)
             with open(template, 'w') as f:
                 # Write default template to file
                 f.write(defaulttemplate)
                 f.close()
 
-    indir = Path("in/")
-    # Check if indir exists
-    if indir.is_dir():
-        # It does
-        print(bcolors.OKBLUE + 'in folder exists' + bcolors.ENDC)
-    else:
+    # Create in folder if it doesn't exist
+    if not indir.is_dir():
         # It doesn't
-        print(bcolors.WARNING + 'in folder does not exist, creating one' + bcolors.ENDC)
+        print(bcolors.WARNING + 'Creating in folder' + bcolors.ENDC)
         # Make it
         os.mkdir("in")
 
-    includes = Path("includes/")
-    # Check if includes folder exists
-    if includes.is_dir():
-        # It does
-        print(bcolors.OKBLUE + 'includes folder exists' + bcolors.ENDC)
-    else:
+    # Create includes folder if it doesn't exist
+    if not includes.is_dir():
         # It doesn't
-        print(bcolors.WARNING + 'includes folder does not exist, creating one' + bcolors.ENDC)
+        print(bcolors.WARNING + 'Creating includes folder' + bcolors.ENDC)
         # Make it
         os.mkdir("includes")
-
-    print()
-
-    # Ask for user input before continuing
-    print(bcolors.HEADER + bcolors.BOLD + 'When you are ready to begin, press enter.' + bcolors.ENDC)
-    input()
 
     # Gather files
     print(bcolors.HEADER + bcolors.BOLD + 'Gathering file paths' + bcolors.ENDC)
@@ -260,12 +275,12 @@ def main():
                 for key, val in attribs.items():
                     # If it's the one we're looking for
                     if key == attribute:
-                        # If it's the value we're looking for
+                        # If the value is equal
                         if val == value:
                             # Trigger
                             trigger = True
 
-                # Check if it is in fact if it is NOT that value
+                # Check if we're going to display if it is NOT equal
                 if equals == '!=':
                     # Reverse the trigger
                     trigger = not trigger
@@ -280,7 +295,7 @@ def main():
 
             # If this is a markdown file
             if path.endswith('.md'):
-                # Trim the md from it and make it html
+                # Trim the md from it and make the output extension html
                 path = path[:-2] + 'html'
 
             # Open file and write our contents
