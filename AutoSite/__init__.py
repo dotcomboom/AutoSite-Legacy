@@ -284,7 +284,7 @@ def main():
                 path = path[:-2] + 'html'
 
             # Open file and write our contents
-            f = open('out/' + path, 'w', encoding="utf8")\
+            f = open('out/' + path, 'w', encoding="utf8")
             f.write(template)
             f.close()
 
