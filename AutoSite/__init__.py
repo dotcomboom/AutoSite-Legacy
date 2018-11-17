@@ -2,8 +2,7 @@
 from pathlib import Path
 from bs4 import BeautifulSoup as bs
 from markdown import markdown
-from update_checker import update_check
-import os, shutil, subprocess, re, sys, argparse, pkg_resources
+import os, shutil, subprocess, re, sys, argparse
 
 def main():
     # Enable colors
