@@ -333,6 +333,14 @@ def main():
             if args.prettify:
                 template = bs(template, 'html.parser').prettify()
 
+            # Check if there is a plugin directory
+            if Path('plugins/').is_dir():
+                # For each plugin
+                for plugin in os.listdir('plugins/'):
+                    # Execute the code inside
+                    print(bcolors.BOLD + bcolors.WARNING + 'Running plugin', plugin + bcolors.ENDC)
+                    exec(open('plugins/' + plugin).read())
+
             # Open file and write our contents
             f = open('out/' + path, 'w', encoding="utf8")
             f.write(template)
