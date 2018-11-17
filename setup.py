@@ -17,6 +17,7 @@ setuptools.setup(
         'pathlib',
         'bs4',
         'markdown',
+        'argparse'
     ],
     classifiers=[
         "Development Status :: 4 - Beta",
