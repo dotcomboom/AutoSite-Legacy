@@ -342,7 +342,6 @@ def main():
                     lcls = locals()
                     ran = exec(open('plugins/' + plugin).read(), globals(), lcls)
                     template = lcls['template']
-                    print(len(template))
 
             # Open file and write our contents
             f = open('out/' + path, 'w', encoding="utf8")
