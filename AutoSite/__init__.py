@@ -2,7 +2,7 @@
 from pathlib import Path
 from bs4 import BeautifulSoup as bs
 from markdown import markdown
-import os, shutil, subprocess, re, sys
+import os, shutil, subprocess, re, sys, argparse
 
 def main():
     # Enable colors
@@ -20,6 +20,12 @@ def main():
         BOLD = '\033[1m'
         UNDERLINE = '\033[4m'
     #
+    
+    # Define arguments, help
+    parser = argparse.ArgumentParser(add_help=True)
+    parser.add_argument('-p', '--prettify', action='store_true', help='Enable BeautifulSoup4 prettifying on output pages. Experimental.')
+    # Parse
+    args = parser.parse_args()
 
     # Set and prettify default template
     defaulttemplate = bs('<!DOCTYPE html><html><head><meta charset="utf-8"><title>[#title#]</title><meta property="og:type" content="website"><meta property="og:image" content=""><meta name="og:site_name" content="AutoSite"><meta name="og:title" content="[#title#]"><meta name="og:description" content="[#description#]"><meta name="theme-color" content="#333333"></head><body><header><h2>[#title#]</h2></header><main>[#content#]</main><footer><hr><p>Generated with AutoSite</p></footer></body></html>', "html.parser").prettify()
@@ -56,6 +62,9 @@ def main():
     else:
         # It doesn't
         print(bcolors.WARNING + 'includes folder does not exist yet' + bcolors.ENDC)
+    
+    if args.prettify:
+        print(bcolors.BOLD + bcolors.WARNING + 'Prettifying is enabled' + bcolors.ENDC)
 
     print()
 
@@ -296,6 +305,10 @@ def main():
                 # Trim the md from it and make the output extension html
                 path = path[:-2] + 'html'
 
+            # If prettifying is enabled, do that
+            if args.prettify:
+                template = bs(template, 'html.parser').prettify()
+
             # Open file and write our contents
             f = open('out/' + path, 'w', encoding="utf8")
             f.write(template)
@@ -307,7 +320,7 @@ def main():
 
     # All files processed
     print(bcolors.BOLD + bcolors.HEADER + bcolors.OKGREEN + 'Finished.' + bcolors.ENDC)
-    # Exit to avoid repeats
+    # Terminate to avoid repeats
     sys.exit()
 
 # If not run through package script "autosite" (in that case the script would already have run and terminated itself), but from the file directly run
