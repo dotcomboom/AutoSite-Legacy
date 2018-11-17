@@ -7,8 +7,10 @@ import re
 import sys
 
 def main():
+    # Enable colors
     subprocess.call('', shell=True)
     
+    # Class of colors
     # https://stackoverflow.com/a/287944
     class bcolors:
         HEADER = '\033[95m'
@@ -21,197 +23,278 @@ def main():
         UNDERLINE = '\033[4m'
     #
 
+    # Set and prettify default template
+    defaulttemplate = bs('<!DOCTYPE html><html><head> <meta charset="utf-8"/> <title>[#title#]</title> <meta property="og:type" content="website"/> <meta property="og:image" content=""/> <meta name="og:site_name" content="AutoSite"/> <meta name="og:title" content="[#title#]"/> <meta name="og:description" content="[#description#]"> <meta name="theme-color" content="#333333"/></head><body><header><h2>[#title#]</h2></header><main>[#content#]</main><footer><hr/><p>Generated with AutoSite</p></footer></body></html>', "html.parser").prettify()
+
+    # Blatant self-advertising
     print(bcolors.BOLD + bcolors.HEADER + bcolors.UNDERLINE + 'AUTOSITE' + bcolors.ENDC)
     print()
 
+    # Use/create default template
     template = Path('templates/default.html')
+    # Check if exists
     if template.is_file():
+        # It does
         print(bcolors.OKBLUE + 'templates/default.html exists' + bcolors.ENDC)
     else:
+        # It doesn't
         print(bcolors.WARNING + 'templates/default.html does not exist' + bcolors.ENDC)
+        # Make templates directory
         os.makedirs(os.path.dirname(template), exist_ok=True)
+        # Check if there is an old template.html file and migrate it
         oldtemplate = Path('template.html')
         if oldtemplate.is_file():
             print(bcolors.OKBLUE + 'Legacy template.html exists, migrating' + bcolors.ENDC)
+            # Copy template.html to templates/default.html
             shutil.copyfile('template.html', 'templates/default.html')
         else:
             print(bcolors.WARNING + 'Creating one' + bcolors.ENDC)
-            defaulttemplate = '<!DOCTYPE html><html><head> <meta charset="utf-8"/> <title>[#title#]</title> <meta property="og:type" content="website"/> <meta property="og:image" content=""/> <meta name="og:site_name" content="AutoSite"/> <meta name="og:title" content="[#title#]"/> <meta name="og:description" content="[#description#]"> <meta name="theme-color" content="#333333"/></head><body><header><h2>[#title#]</h2></header><main>[#content#]</main><footer><hr/><p>Generated with AutoSite</p></footer></body></html>'
             with open(template, 'w') as f:
-                f.write(bs(defaulttemplate, "html.parser").prettify())
+                # Write default template to file
+                f.write(defaulttemplate)
                 f.close()
 
     indir = Path("in/")
+    # Check if indir exists
     if indir.is_dir():
+        # It does
         print(bcolors.OKBLUE + 'in folder exists' + bcolors.ENDC)
     else:
+        # It doesn't
         print(bcolors.WARNING + 'in folder does not exist, creating one' + bcolors.ENDC)
+        # Make it
         os.mkdir("in")
 
     includes = Path("includes/")
+    # Check if includes folder exists
     if includes.is_dir():
+        # It does
         print(bcolors.OKBLUE + 'includes folder exists' + bcolors.ENDC)
     else:
+        # It doesn't
         print(bcolors.WARNING + 'includes folder does not exist, creating one' + bcolors.ENDC)
+        # Make it
         os.mkdir("includes")
 
     print()
+
+    # Ask for user input before continuing
     print(bcolors.HEADER + bcolors.BOLD + 'When you are ready to begin, press enter.' + bcolors.ENDC)
     input()
+
+    # Gather files
     print(bcolors.HEADER + bcolors.BOLD + 'Gathering file paths' + bcolors.ENDC)
     files = []
+    # Go through each file in input folder
     for dirName, subdirList, fileList in os.walk('in/'):
         for path in os.listdir(dirName):
+            # Check if file has extension
             if '.' in path:
+                # Check if it isn't common meta files used by OS X and Windows
                 if '.DS_Store' not in path:
                     if 'Thumbs.db' not in path:
+                        # Add the file to the list
                         files.append((dirName + "/" + path).replace('//', '/').replace(
                     'in/', '', 1))
+    # Print it out
     print(files)
+
     outdir = Path("out/")
+    # Check if outdir exists
     if outdir.is_dir():
+        # It does
         print(bcolors.HEADER + bcolors.BOLD + 'Deleting out folder' + bcolors.ENDC)
+        # Delete it
         shutil.rmtree('out/')
+
+    # Copy includes folder to out folder first of all
     print(bcolors.HEADER + bcolors.BOLD + 'Copying includes folder to out folder' + bcolors.ENDC)
     shutil.copytree('includes', 'out')
 
+    # Process input files
     print(bcolors.HEADER + bcolors.BOLD + 'Going through input files' + bcolors.ENDC)
     print()
 
+    # For each file
     for path in files:
+        # Check if it exists
         if os.path.isfile('in/' + path):
+            # If it's markdown let user know it'll be translated into html
             if path.endswith('.md'):
                 print(bcolors.BOLD + 'Path: ' + bcolors.ENDC + bcolors.OKBLUE + path + bcolors.ENDC + ' ==> ' + bcolors.OKBLUE + path[:-2] + 'html' + bcolors.ENDC)
             else:
                 print(bcolors.BOLD + 'Path: ' + bcolors.ENDC + bcolors.OKBLUE + path + bcolors.ENDC)
+            
+            # Open, read file
             f = open('in/' + path, 'r', encoding="utf8")
             filearray = f.readlines()
             contentarray = filearray
+            # Filter out attributes from contentarray
             while contentarray[0].startswith('<!-- '):
                 contentarray = contentarray[1:]
+            # Set the content to everything in the contentarray
+            # BUG IS HERE (if contentarray is empty, as in a file with no content and just attributes)
             content = ''.join(contentarray)
+            # Close the file
             f.close()
 
+            # Check if a markdown file
             if path.endswith('.md'):
+                # If it is, run it through markdown to translate it into html
                 content = markdown(content)
 
+            # Default attributes
             attribs = {'title': '', 'description': '', 'template': 'default'}
 
-            # legacy
+            # Handle legacy attributes (also known as a mess)
 
+            # These would work like:
+            #    1st line: title
+            #    2nd line: description
+            #    3rd line: template
+
+            # Check if it is a legacy title
             if filearray[0].startswith('<!-- ') and not filearray[0].startswith('<!-- attrib'):
-                title = filearray[0].replace('<!--', '').replace('-->', '').strip()
-                print(bcolors.BOLD + 'Legacy Title: ' + bcolors.ENDC + bcolors.OKBLUE + title + bcolors.ENDC)
+                # Set title variable
+                attribs['title'] = filearray[0].replace('<!--', '').replace('-->', '').strip()
+                print(bcolors.BOLD + 'Legacy Title: ' + bcolors.ENDC + bcolors.OKBLUE + attribs['title'] + bcolors.ENDC)
                 filearray = filearray[1:]
-            else:
-                title = ""
 
+            # Check if it is a legacy description
             if filearray[0].startswith('<!-- ') and not filearray[0].startswith('<!-- attrib'):
-                description = filearray[0].replace('<!--', '').replace('-->',
-                                                                       '').strip()
-                print(bcolors.BOLD + 'Legacy Description: ' + bcolors.ENDC + bcolors.OKBLUE + description + bcolors.ENDC)
+                # Set description variable
+                attribs['description'] = filearray[0].replace('<!--', '').replace('-->', '').strip()
+                print(bcolors.BOLD + 'Legacy Description: ' + bcolors.ENDC + bcolors.OKBLUE + attribs['description'] + bcolors.ENDC)
                 filearray = filearray[1:]
-            else:
-                description = ""
 
+            # Check if it is a legacy template
             if filearray[0].startswith('<!-- ') and not filearray[0].startswith('<!-- attrib'):
-                template = filearray[0].replace('<!--', '').replace('-->', '').strip()
-                print(bcolors.BOLD + 'Legacy Template: ' + bcolors.ENDC + bcolors.OKBLUE + template + bcolors.ENDC)
+                # Set template variable
+                attribs['template'] = filearray[0].replace('<!--', '').replace('-->', '').strip()
+                print(bcolors.BOLD + 'Legacy Template: ' + bcolors.ENDC + bcolors.OKBLUE + attribs['template'] + bcolors.ENDC)
                 filearray = filearray[1:]
-            else:
-                template = "default"
 
-            attribs['title'] = title
-            attribs['description'] = description
-            attribs['template'] = template
+            # Handle new attributes
 
-            # handle new attributes
+            # Open, read file
             f = open('in/' + path, 'r', encoding="utf8")
             filearray = f.readlines()
             f.close()
 
+            # For each line
             while len(filearray) > 0:
+                # Check if it is an attribute
                 if filearray[0].startswith('<!-- attrib '):
+                    # Get the attribute being set
                     attrib = filearray[0].replace('<!-- attrib ', '').replace('-->', '').strip().split(': ')[0]
+                    # Get the value it's being set to
                     value = filearray[0].replace('<!-- attrib ', '').replace('-->', '').strip().split(': ')[1]
                     print(bcolors.BOLD + 'Attribute ' + attrib + ': ' + bcolors.ENDC + bcolors.OKBLUE + value + bcolors.ENDC)
+                    # Add to attributes
                     attribs[attrib] = value
                 filearray = filearray[1:]
 
-            # cool
-
+            # Get the template's path
             template = 'templates/' + attribs['template'] + '.html'
 
+            # If it doesn't exist, then create it from the default
             if not Path(template).is_file():
                 print(bcolors.WARNING + 'Creating ' + template + bcolors.ENDC)
-                defaulttemplate = '<!DOCTYPE html><html><head> <meta charset="utf-8"/> <title>[#title#]</title> <meta property="og:type" content="website"/> <meta property="og:image" content=""/> <meta name="og:site_name" content="AutoSite"/> <meta name="og:title" content="[#title#]"/> <meta name="og:description" content="[#description#]"> <meta name="theme-color" content="#333333"/></head><body><header><h2>[#title#]</h2></header><main>[#content#]</main><footer><hr/><p>Generated with AutoSite</p></footer></body></html>'
+                # Write to file
                 with open(template, 'w') as f:
-                    f.write(bs(defaulttemplate, "html.parser").prettify())
+                    f.write(defaulttemplate)
                     f.close()
 
+            # Read template file
             f = open(template, 'r', encoding="utf8")
             template = f.read()
             f.close()
 
+            # Create subdirectories
             os.makedirs(os.path.dirname('out/' + path), exist_ok=True)
 
+            # If there aren't any subdirectories between root and the file, use ./ as the slash so it doesn't refer to the root of the server for file:// compatibility
             if path.count('/') == 0:
                 slash = './'
             else:
                 slash = '/'
 
+            # Set content, path, and root attributes
             attribs['content'] = content
             attribs['path'] = path
             attribs['root'] = (('../' * path.count('/')) + slash).replace('//', '/')
-            # these still have higher priority, do them first anyway just in case
+
+            # These special attributes still have higher priority, do them first anyway just in case ¯\_(ツ)_/¯
             template = template.replace('[#content#]', attribs['content']).replace('[#path#]', attribs['path']).replace('[#root#]', attribs['root'])
 
+            # For each attribute
             for key, value in attribs.items():
+                # Slot it into the template
                 template = template.replace('[#' + key + '#]', value)
 
-            # now let's handle conditional text
-            # conditional text is an experimental feature.
-            # only one is supported per line because of some regex whatever, and stuff might make it trip up
-            # example:
+            # Now let's handle conditional text
+            # Conditional text is an experimental feature.
+            # Only one is supported per line because of some regex whatever, and stuff might make it trip up
+            # Example:
 
             # [path!=pages/link.html]<a href="[#root#]pages/link.html">[/path!=]
             #    Linking
             # [path!=pages/link.html]</a>[/path!=]
             
-            # this works with any attribute.
+            # This works with any attribute.
+
             for atteql, value, text in re.findall(r'\[(.*)=(.*?)\](.*)\[\/\1.*\]', template):
+                # Add equal sign to =
+                # atteql is the combination of the attribute and the equal sign
+                # If atteql was !, for (if not) then it would be !=, if it was nothing, it'd be =. absolute genius!!!
                 atteql += '='
+                # Get the attribute
                 attribute = atteql.replace('!=', '').replace('=', '')
+                # Get the equal sign
                 equals = atteql.replace(attribute, '')
 
+                # Whether to display
                 trigger = False
 
-                if attribute == 'path':
-                    if path == value:
-                        trigger = True
-                else:
-                    for key, val in attribs.items():
-                        if key == attribute:
-                            if val == value:
-                                trigger = True
+                # For each attribute
+                for key, val in attribs.items():
+                    # If it's the one we're looking for
+                    if key == attribute:
+                        # If it's the value we're looking for
+                        if val == value:
+                            # Trigger
+                            trigger = True
 
+                # Check if it is in fact if it is NOT that value
                 if equals == '!=':
+                    # Reverse the trigger
                     trigger = not trigger
 
+                # If triggered
                 if trigger:
+                    # Set it to the text
                     template = template.replace('[' + atteql + value + ']' + text + '[/' + atteql + ']', text)
                 else:
+                    # Make it blank
                     template = template.replace('[' + atteql + value + ']' + text + '[/' + atteql + ']', '')
 
+            # If this is a markdown file
             if path.endswith('.md'):
+                # Trim the md from it and make it html
                 path = path[:-2] + 'html'
 
-            f = open('out/' + path, 'w', encoding="utf8")
+            # Open file and write our contents
+            f = open('out/' + path, 'w', encoding="utf8")\
             f.write(template)
             f.close()
+
+            # We are done!
             print(bcolors.BOLD + bcolors.OKGREEN + 'Wrote to out/' + path + bcolors.ENDC)
             print()
+    # All files processed
     print(bcolors.BOLD + bcolors.HEADER + bcolors.OKGREEN + 'Finished.' + bcolors.ENDC)
+    # Exit to avoid repeats
     sys.exit()
 
+# If not run through package script "autosite" (in that case the script would already have run and terminated itself), but from the file directly run
 main()
