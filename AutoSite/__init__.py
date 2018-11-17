@@ -339,7 +339,10 @@ def main():
                 for plugin in os.listdir('plugins/'):
                     # Execute the code inside
                     print(bcolors.BOLD + bcolors.WARNING + 'Running plugin', plugin + bcolors.ENDC)
-                    exec(open('plugins/' + plugin).read())
+                    lcls = locals()
+                    ran = exec(open('plugins/' + plugin).read(), globals(), lcls)
+                    template = lcls['template']
+                    print(len(template))
 
             # Open file and write our contents
             f = open('out/' + path, 'w', encoding="utf8")
