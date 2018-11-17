@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 from pathlib import Path
-import os, shutil
 from bs4 import BeautifulSoup as bs
 from markdown import markdown
-import subprocess
-import re
-import sys
+import os, shutil, subprocess, re, sys
 
 def main():
     # Enable colors
