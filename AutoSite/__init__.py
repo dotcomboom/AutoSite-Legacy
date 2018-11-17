@@ -273,6 +273,14 @@ def main():
             # These special attributes still have higher priority, do them first anyway just in case ¯\_(ツ)_/¯
             template = template.replace('[#content#]', attribs['content']).replace('[#path#]', attribs['path']).replace('[#root#]', attribs['root'])
 
+            # Check if there is a plugin directory
+            if Path('plugins/').is_dir():
+                # For each plugin
+                for plugin in os.listdir('plugins/'):
+                    # Execute the code inside
+                    print(bcolors.BOLD + bcolors.WARNING + 'Running plugin', plugin + bcolors.ENDC)
+                    exec(open('plugins/' + plugin).read())
+
             # For each attribute
             for key, value in attribs.items():
                 # Slot it into the template
@@ -332,14 +340,6 @@ def main():
             # If prettifying is enabled, do that
             if args.prettify:
                 template = bs(template, 'html.parser').prettify()
-
-            # Check if there is a plugin directory
-            if Path('plugins/').is_dir():
-                # For each plugin
-                for plugin in os.listdir('plugins/'):
-                    # Execute the code inside
-                    print(bcolors.BOLD + bcolors.WARNING + 'Running plugin', plugin + bcolors.ENDC)
-                    exec(open('plugins/' + plugin).read())
 
             # Open file and write our contents
             f = open('out/' + path, 'w', encoding="utf8")
