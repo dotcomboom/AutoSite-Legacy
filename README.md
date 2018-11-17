@@ -1,16 +1,13 @@
 # AutoSite
 AutoSite helps you keep all of your website's pages in the same basic template. Managing a navigation bar, a footer, and even meta/OpenGraph tags across several pages is simple.
 
-### [You can try AutoSite right in your browser!](https://repl.it/@dotcomboom/AutoSite)
-
-## Prerequisites
-   - Python 3
-   - BeautifulSoup 4
-   - pathlib
-   - Markdown
+### [Try online on repl.it](https://repl.it/@dotcomboom/AutoSite)
 
 ## Installation
-AutoSite can be installed with the command `pip install autosite` or `pip3 install autosite` and used anywhere with the command `autosite`.
+### As a package
+You can install AutoSite as a package. You can `cd` to the directory where you're building your site and build with the `autosite` command. It can be installed with the command `pip install autosite` or `pip3 install autosite` depending on your configuration.
+### Embedded
+[`__init__.py`](https://github.com/dotcomboom/AutoSite/blob/master/AutoSite/__init__.py) can also be run directly like the pre-PyPI AutoSite script. Just paste it into wherever you're working and you can run it from there. You'll need to install the requirements manually, which are in [the requirements.txt file](https://github.com/dotcomboom/AutoSite/blob/master/requirements.txt) with the `pip install -r requirements.txt` or `pip3 install -r requirements.txt` commands (provided that you downloaded or wrote that file to the same directory).
 
 ## Usage
 0. Run `autosite`. It will create a basic `default.html` template and the `in` and `includes` folders.
