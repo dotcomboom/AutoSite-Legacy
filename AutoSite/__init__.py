@@ -2,7 +2,8 @@
 from pathlib import Path
 from bs4 import BeautifulSoup as bs
 from markdown import markdown
-import os, shutil, subprocess, re, sys, argparse
+from update_checker import update_check
+import os, shutil, subprocess, re, sys, argparse, pkg_resources
 
 def main():
     # Enable colors
@@ -24,7 +25,6 @@ def main():
     def dirname(path):
         # Replacement for os.path.dirname() which is broken on some versions of Python (3.5.2 and maybe others)
         return '/'.join(str(path).split('/')[:-1])
-
     
     # Define arguments, help
     parser = argparse.ArgumentParser(add_help=True)
@@ -34,6 +34,7 @@ def main():
     parser.add_argument('-d', '--dir', action='store', help='run AutoSite at a specific location')
     # Parse
     args = parser.parse_args()
+
 
     # Disable printing to console and enable auto mode with silent argument
     if args.silent:
@@ -273,14 +274,6 @@ def main():
             # These special attributes still have higher priority, do them first anyway just in case ¯\_(ツ)_/¯
             template = template.replace('[#content#]', attribs['content']).replace('[#path#]', attribs['path']).replace('[#root#]', attribs['root'])
 
-            # Check if there is a plugin directory
-            if Path('plugins/').is_dir():
-                # For each plugin
-                for plugin in os.listdir('plugins/'):
-                    # Execute the code inside
-                    print(bcolors.BOLD + bcolors.WARNING + 'Running plugin', plugin + bcolors.ENDC)
-                    exec(open('plugins/' + plugin).read())
-
             # For each attribute
             for key, value in attribs.items():
                 # Slot it into the template
@@ -340,6 +333,14 @@ def main():
             # If prettifying is enabled, do that
             if args.prettify:
                 template = bs(template, 'html.parser').prettify()
+
+            # Check if there is a plugin directory
+            if Path('plugins/').is_dir():
+                # For each plugin
+                for plugin in os.listdir('plugins/'):
+                    # Execute the code inside
+                    print(bcolors.BOLD + bcolors.WARNING + 'Running plugin', plugin + bcolors.ENDC)
+                    exec(open('plugins/' + plugin).read())
 
             # Open file and write our contents
             f = open('out/' + path, 'w', encoding="utf8")
