@@ -4,10 +4,9 @@ from bs4 import BeautifulSoup as bs
 from markdown import markdown
 import subprocess
 import re
-ran = False
+import sys
 
 def main():
-    ran = True
     subprocess.call('', shell=True)
     
     # https://stackoverflow.com/a/287944
@@ -213,6 +212,6 @@ def main():
             print(bcolors.BOLD + bcolors.OKGREEN + 'Wrote to out/' + path + bcolors.ENDC)
             print()
     print(bcolors.BOLD + bcolors.HEADER + bcolors.OKGREEN + 'Finished.' + bcolors.ENDC)
+    sys.exit()
 
-if ran == False:
-    main()
+main()
