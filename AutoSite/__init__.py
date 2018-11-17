@@ -20,13 +20,18 @@ def main():
         BOLD = '\033[1m'
         UNDERLINE = '\033[4m'
     #
+
+    def dirname(path):
+        # Replacement for os.path.dirname() which is broken on some versions of Python (3.5.2 and maybe others)
+        return '/'.join(str(path).split('/')[:-1])
+
     
     # Define arguments, help
     parser = argparse.ArgumentParser(add_help=True)
     parser.add_argument('-p', '--prettify', action='store_true', help='enables BeautifulSoup4 prettifying on output pages (experimental)')
     parser.add_argument('-a', '--auto', action='store_true', help='skips user input, for use in scripts etc')
     parser.add_argument('-s', '--silent', action='store_true', help='runs silently, skipping user input')
-    parser.add_argument('-ws', '--workspace', action='store', help='run AutoSite at a specific location')
+    parser.add_argument('-d', '--dir', action='store', help='run AutoSite at a specific location')
     # Parse
     args = parser.parse_args()
 
@@ -36,8 +41,8 @@ def main():
         args.auto = True
 
     # Change working directory if called for
-    if args.workspace:
-        os.chdir(args.workspace)
+    if args.dir:
+        os.chdir(args.dir)
 
     # Set and prettify default template
     defaulttemplate = bs('<!DOCTYPE html><html><head><meta charset="utf-8"><title>[#title#]</title><meta property="og:type" content="website"><meta property="og:image" content=""><meta name="og:site_name" content="AutoSite"><meta name="og:title" content="[#title#]"><meta name="og:description" content="[#description#]"><meta name="theme-color" content="#333333"></head><body><header><h2>[#title#]</h2></header><main>[#content#]</main><footer><hr><p>Generated with AutoSite</p></footer></body></html>', "html.parser").prettify()
@@ -92,7 +97,7 @@ def main():
     if not template.is_file():
         # It doesn't
         # Make templates directory
-        os.makedirs(os.path.dirname(template), exist_ok=True)
+        os.makedirs(dirname(template), exist_ok=True)
         # Check if there is an old template.html file and migrate it
         oldtemplate = Path('template.html')
         if oldtemplate.is_file():
@@ -249,7 +254,7 @@ def main():
             f.close()
 
             # Create subdirectories
-            os.makedirs(os.path.dirname('out/' + path), exist_ok=True)
+            os.makedirs(dirname('out/' + path), exist_ok=True)
 
             # If there aren't any subdirectories between root and the file, use ./ as the slash so it doesn't refer to the root of the server for file:// compatibility
             if path.count('/') == 0:
