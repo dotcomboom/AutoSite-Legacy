@@ -1,7 +1,10 @@
 # AutoSite
 AutoSite helps you keep all of your website's pages in the same basic template. Managing a navigation bar, a footer, and even meta/OpenGraph tags across several pages is simple.
 
-### [Try online on repl.it](https://repl.it/@dotcomboom/AutoSite)
+### [Try it online on repl.it](https://repl.it/@dotcomboom/AutoSite)
+### [PyPI](https://pypi.org/project/AutoSite/)
+#### [Github](https://github.com/dotcomboom/AutoSite/)
+#### [Unofficial guide](https://autosite.neocities.org)
 
 ## Installation
 ### As a package
