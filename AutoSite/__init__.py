@@ -106,7 +106,7 @@ def main():
             shutil.copyfile('template.html', 'templates/default.html')
         else:
             print(bcolors.WARNING + 'Creating templates/default.html' + bcolors.ENDC)
-            with open(template, 'w') as f:
+            with open(str(template), 'w') as f:
                 # Write default template to file
                 f.write(defaulttemplate)
                 f.close()
