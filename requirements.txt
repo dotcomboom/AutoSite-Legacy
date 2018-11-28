@@ -2,3 +2,4 @@ pathlib
 bs4
 markdown
 argparse
+dirsync
