@@ -2,6 +2,7 @@
 from pathlib import Path
 from bs4 import BeautifulSoup as bs
 from markdown import markdown
+from dirsync import sync
 import os, shutil, subprocess, re, sys, argparse
 
 def main():
@@ -143,16 +144,16 @@ def main():
     print(files)
 
     outdir = Path("out/")
-    # Check if outdir exists
-    if outdir.is_dir():
-        # It does
-        print(bcolors.HEADER + bcolors.BOLD + 'Deleting out folder' + bcolors.ENDC)
-        # Delete it
-        shutil.rmtree('out/')
+    # Create output directory if it doesn't exist
+    if not outdir.is_dir():
+        # It doesn't
+        print(bcolors.WARNING + 'Creating out folder' + bcolors.ENDC)
+        # Make it
+        os.mkdir("out")
 
-    # Copy includes folder to out folder first of all
-    print(bcolors.HEADER + bcolors.BOLD + 'Copying includes folder to out folder' + bcolors.ENDC)
-    shutil.copytree('includes', 'out')
+    # Sync includes folder to out folder first of all
+    print(bcolors.HEADER + bcolors.BOLD + 'Syncing includes to out folder' + bcolors.ENDC)
+    sync('includes/', 'out/', 'sync', purge=True)
 
     # Process input files
     print(bcolors.HEADER + bcolors.BOLD + 'Going through input files' + bcolors.ENDC)
