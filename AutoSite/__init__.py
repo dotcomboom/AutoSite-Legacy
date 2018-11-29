@@ -6,6 +6,13 @@ from dirsync import sync
 import os, shutil, subprocess, re, sys, argparse
 
 def main():
+    # Default parameters
+    # Set these and they will always be active whether parameters are passed or not
+    prettify = False
+    auto = False
+    silent = False
+    directory = False # Set to path
+
     # Enable colors
     subprocess.call('', shell=True)
     
@@ -35,15 +42,23 @@ def main():
     # Parse
     args = parser.parse_args()
 
-
-    # Disable printing to console and enable auto mode with silent argument
+    if args.prettify:
+        prettify = True
+    if args.auto:
+        auto = True
     if args.silent:
+        silent = True
+    if args.dir:
+        directory = args.dir
+    
+    # Disable printing to console and enable auto mode with silent argument
+    if silent:
         sys.stdout = open(os.devnull, 'w')
-        args.auto = True
+        auto = True
 
     # Change working directory if called for
-    if args.dir:
-        os.chdir(args.dir)
+    if directory:
+        os.chdir(directory)
 
     # Set and prettify default template
     defaulttemplate = bs('<!DOCTYPE html><html><head><meta charset="utf-8"><title>[#title#]</title><meta property="og:type" content="website"><meta property="og:image" content=""><meta name="og:site_name" content="AutoSite"><meta name="og:title" content="[#title#]"><meta name="og:description" content="[#description#]"><meta name="theme-color" content="#333333"></head><body><header><h2>[#title#]</h2></header><main>[#content#]</main><footer><hr><p>Generated with AutoSite</p></footer></body></html>', "html.parser").prettify()
@@ -81,16 +96,16 @@ def main():
         # It doesn't
         print(bcolors.WARNING + 'includes folder does not exist yet' + bcolors.ENDC)
     
-    if args.prettify:
+    if prettify:
         print(bcolors.BOLD + bcolors.WARNING + 'Prettifying is enabled' + bcolors.ENDC)
 
-    if args.auto:
+    if auto:
         print(bcolors.BOLD + bcolors.WARNING + 'User input is being skipped' + bcolors.ENDC)
 
     print()
 
     # Ask for user input before continuing if not being run with auto (silent enables auto too)
-    if not args.auto:
+    if not auto:
         print(bcolors.HEADER + bcolors.BOLD + 'When you are ready to begin, press enter.' + bcolors.ENDC)
         input()
 
@@ -331,7 +346,7 @@ def main():
                 path = path[:-2] + 'html'
 
             # If prettifying is enabled, do that
-            if args.prettify:
+            if prettify:
                 template = bs(template, 'html.parser').prettify()
 
             # Check if there is a plugin directory
