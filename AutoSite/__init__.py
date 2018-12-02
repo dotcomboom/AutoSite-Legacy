@@ -113,7 +113,8 @@ def main():
     if not template.is_file():
         # It doesn't
         # Make templates directory
-        os.makedirs(dirname(template), exist_ok=True)
+        if not Path('templates/').is_dir():
+            os.mkdir('templates')
         # Check if there is an old template.html file and migrate it
         oldtemplate = Path('template.html')
         if oldtemplate.is_file():
