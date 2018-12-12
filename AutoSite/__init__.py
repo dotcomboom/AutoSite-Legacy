@@ -154,7 +154,7 @@ def main():
                 if '.DS_Store' not in path:
                     if 'Thumbs.db' not in path:
                         # Add the file to the list
-                        files.append((dirName + "/" + path).replace('//', '/').replace(
+                        files.append((dirName + "/" + path).replace('\\', '/').replace('//', '/').replace(
                     'in/', '', 1))
     # Print it out
     print(files)
