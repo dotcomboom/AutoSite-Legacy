@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 from bs4 import BeautifulSoup as bs
-from markdown import markdown
+from commonmark import commonmark
 from dirsync import sync
 import os, shutil, subprocess, re, sys, argparse
 
@@ -203,8 +203,8 @@ def main():
 
             # Check if a markdown file
             if path.endswith('.md'):
-                # If it is, run it through markdown to translate it into html
-                content = markdown(content)
+                # If it is, run it through commonmark to translate it into html
+                content = commonmark(content)
 
             # Default attributes
             attribs = {'title': '', 'description': '', 'template': 'default'}

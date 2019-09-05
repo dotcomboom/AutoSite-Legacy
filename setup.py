@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="AutoSite",
-    version="1.2.2",
+    version="1.3",
     author="dotcomboom",
     author_email="dotcomboom@protonmail.com",
     description="Keep all your website's pages under one template",
@@ -16,7 +16,7 @@ setuptools.setup(
     install_requires=[
         'pathlib',
         'bs4',
-        'markdown',
+        'commonmark',
         'argparse',
         'dirsync'
     ],

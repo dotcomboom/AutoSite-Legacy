@@ -1,5 +1,5 @@
 pathlib
 bs4
-markdown
+commonmark
 argparse
 dirsync
