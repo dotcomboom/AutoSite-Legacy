@@ -175,6 +175,8 @@ def main():
     print(bcolors.HEADER + bcolors.BOLD + 'Going through input files' + bcolors.ENDC)
     print()
 
+    template_cache = {}
+
     # For each file
     for path in files:
         # Check if it exists
@@ -257,21 +259,31 @@ def main():
                     attribs[attrib] = value
                 filearray = filearray[1:]
 
-            # Get the template's path
-            template = 'templates/' + attribs['template'] + '.html'
+            template = ''
+            
+            # Check if template is cached
+            if attribs['template'] in template_cache.keys():
+                template = template_cache[attribs['template']]
+            else:
+                # If not then load it;
+                # Get the template's path
+                print('Caching template', attribs['template'])
+                template = 'templates/' + attribs['template'] + '.html'
 
-            # If it doesn't exist, then create it from the default
-            if not Path(template).is_file():
-                print(bcolors.WARNING + 'Creating ' + template + bcolors.ENDC)
-                # Write to file
-                with open(template, 'w') as f:
-                    f.write(defaulttemplate)
-                    f.close()
+                # If it doesn't exist, then create it from the default
+                if not Path(template).is_file():
+                    print(bcolors.WARNING + 'Creating ' + template + bcolors.ENDC)
+                    # Write to file
+                    with open(template, 'w') as f:
+                        f.write(defaulttemplate)
+                        f.close()
 
-            # Read template file
-            f = open(template, 'r', encoding="utf8")
-            template = f.read()
-            f.close()
+                # Read template file
+                f = open(template, 'r', encoding="utf8")
+                template = f.read()
+                f.close()
+                # Cache
+                template_cache[attribs['template']] = template
 
             # Create subdirectories
             os.makedirs(dirname('out/' + path), exist_ok=True)
