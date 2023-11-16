@@ -3,7 +3,7 @@ from pathlib import Path
 from bs4 import BeautifulSoup as bs
 from commonmark import commonmark
 from dirsync import sync
-import os, shutil, subprocess, re, sys, argparse
+import os, time, shutil, subprocess, re, sys, argparse
 
 def main():
     # Default parameters
@@ -35,7 +35,7 @@ def main():
     
     # Define arguments, help
     parser = argparse.ArgumentParser(add_help=True)
-    parser.add_argument('-p', '--prettify', action='store_true', help='enables BeautifulSoup4 prettifying on output pages (experimental)')
+    parser.add_argument('-p', '--prettify', action='store_true', help='enables BeautifulSoup4 prettifying on output pages (may affect)')
     parser.add_argument('-a', '--auto', action='store_true', help='skips user input, for use in scripts etc')
     parser.add_argument('-s', '--silent', action='store_true', help='runs silently, skipping user input')
     parser.add_argument('-d', '--dir', action='store', help='run AutoSite at a specific location')
@@ -299,6 +299,8 @@ def main():
             attribs['content'] = content
             attribs['path'] = path
             attribs['root'] = (('../' * path.count('/')) + slash).replace('//', '/')
+            modified = os.path.getmtime('pages/' + path)
+            attribs['modified'] = time.strftime("%m/%d/%Y", time.localtime(modified))
 
             # These special attributes still have higher priority, do them first anyway just in case ¯\_(ツ)_/¯
             template = template.replace('[#content#]', attribs['content']).replace('[#path#]', attribs['path']).replace('[#root#]', attribs['root'])
