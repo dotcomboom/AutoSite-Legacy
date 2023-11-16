@@ -78,14 +78,15 @@ def main():
         # It doesn't
         print(bcolors.WARNING + 'templates/default.html does not exist yet' + bcolors.ENDC)
 
-    indir = Path("in/")
+    indir = Path("pages/")
     # Check if indir exists
     if indir.is_dir():
-        # It does
-        print(bcolors.OKBLUE + 'in folder exists' + bcolors.ENDC)
+        print(bcolors.OKBLUE + 'pages folder exists' + bcolors.ENDC)
     else:
-        # It doesn't
-        print(bcolors.WARNING + 'in folder does not exist yet' + bcolors.ENDC)
+        print(bcolors.WARNING + 'pages folder does not exist yet' + bcolors.ENDC)
+
+    if Path("in/").is_dir():
+        print(bcolors.WARNING + 'i This version of AutoSite Legacy uses pages/ as the folder for input pages.\n  Please rename or merge your in/ folder to pages/ if you intend to use these files.' + bcolors.ENDC)
 
     includes = Path("includes/")
     # Check if includes folder exists
@@ -131,9 +132,9 @@ def main():
     # Create in folder if it doesn't exist
     if not indir.is_dir():
         # It doesn't
-        print(bcolors.WARNING + 'Creating in folder' + bcolors.ENDC)
+        print(bcolors.WARNING + 'Creating pages folder' + bcolors.ENDC)
         # Make it
-        os.mkdir("in")
+        os.mkdir("pages")
 
     # Create includes folder if it doesn't exist
     if not includes.is_dir():
@@ -146,7 +147,7 @@ def main():
     print(bcolors.HEADER + bcolors.BOLD + 'Gathering file paths' + bcolors.ENDC)
     files = []
     # Go through each file in input folder
-    for dirName, subdirList, fileList in os.walk('in/'):
+    for dirName, subdirList, fileList in os.walk('pages/'):
         for path in os.listdir(dirName):
             # Check if file has extension
             if '.' in path:
@@ -155,7 +156,7 @@ def main():
                     if 'Thumbs.db' not in path:
                         # Add the file to the list
                         files.append((dirName + "/" + path).replace('\\', '/').replace('//', '/').replace(
-                    'in/', '', 1))
+                    'pages/', '', 1))
     # Print it out
     print(files)
 
@@ -180,7 +181,7 @@ def main():
     # For each file
     for path in files:
         # Check if it exists
-        if os.path.isfile('in/' + path):
+        if os.path.isfile('pages/' + path):
             # If it's markdown let user know it'll be translated into html
             if path.endswith('.md'):
                 print(bcolors.BOLD + 'Path: ' + bcolors.ENDC + bcolors.OKBLUE + path + bcolors.ENDC + ' ==> ' + bcolors.OKBLUE + path[:-2] + 'html' + bcolors.ENDC)
@@ -188,7 +189,7 @@ def main():
                 print(bcolors.BOLD + 'Path: ' + bcolors.ENDC + bcolors.OKBLUE + path + bcolors.ENDC)
             
             # Open, read file
-            f = open('in/' + path, 'r', encoding="utf8")
+            f = open('pages/' + path, 'r', encoding="utf8")
             filearray = f.readlines()
             contentarray = filearray
             # Filter out attributes from contentarray
@@ -242,7 +243,7 @@ def main():
             # Handle new attributes
 
             # Open, read file
-            f = open('in/' + path, 'r', encoding="utf8")
+            f = open('pages/' + path, 'r', encoding="utf8")
             filearray = f.readlines()
             f.close()
 
