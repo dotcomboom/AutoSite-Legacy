@@ -211,7 +211,7 @@ def main():
 
             # Default attributes
             attribs = {'title': '', 'description': '', 'template': 'default'}
-
+        
             # Handle legacy attributes (also known as a mess)
 
             # These would work like:
@@ -247,14 +247,33 @@ def main():
             filearray = f.readlines()
             f.close()
 
+            # If there aren't any subdirectories between root and the file, use ./ as the slash so it doesn't refer to the root of the server for file:// compatibility
+            if path.count('/') == 0:
+                slash = './'
+            else:
+                slash = '/'
+            attribs['path'] = path
+            attribs['root'] = (('../' * path.count('/')) + slash).replace('//', '/')
+            modified = os.path.getmtime('pages/' + path)
+            attribs['modified'] = time.strftime("%m/%d/%Y", time.localtime(modified))
+            attribs['content'] = content
+            # These attributes are set earlier so that they could be overriden if needed
+            # (for example, setting the root attribute to / for a not found page 
+            #  where relative paths would be impossible to predict)
+
+
             # For each line
             while len(filearray) > 0:
+                line = filearray[0]
                 # Check if it is an attribute
-                if filearray[0].startswith('<!-- attrib '):
+                if line.startswith('<!-- attrib '):
                     # Get the attribute being set
-                    attrib = filearray[0].replace('<!-- attrib ', '').replace('-->', '').strip().split(': ')[0]
+                    attrib = line[12:].split(':')[0].strip()
                     # Get the value it's being set to
-                    value = filearray[0].replace('<!-- attrib ', '').replace('-->', '').strip().split(': ')[1]
+                    value = line[(12 + len(attrib) + 2):].strip()
+                    # Remove trailing -->
+                    if value.endswith('-->'):
+                        value = value[:-3].strip()
                     print(bcolors.BOLD + 'Attribute ' + attrib + ': ' + bcolors.ENDC + bcolors.OKBLUE + value + bcolors.ENDC)
                     # Add to attributes
                     attribs[attrib] = value
@@ -289,26 +308,15 @@ def main():
             # Create subdirectories
             os.makedirs(dirname('out/' + path), exist_ok=True)
 
-            # If there aren't any subdirectories between root and the file, use ./ as the slash so it doesn't refer to the root of the server for file:// compatibility
-            if path.count('/') == 0:
-                slash = './'
-            else:
-                slash = '/'
-
-            # Set content, path, and root attributes
-            attribs['content'] = content
-            attribs['path'] = path
-            attribs['root'] = (('../' * path.count('/')) + slash).replace('//', '/')
-            modified = os.path.getmtime('pages/' + path)
-            attribs['modified'] = time.strftime("%m/%d/%Y", time.localtime(modified))
-
-            # These special attributes still have higher priority, do them first anyway just in case ¯\_(ツ)_/¯
-            template = template.replace('[#content#]', attribs['content']).replace('[#path#]', attribs['path']).replace('[#root#]', attribs['root'])
+            # Slot in content first so attributes within work
+            template = template.replace('[#content#]', content)
 
             # For each attribute
             for key, value in attribs.items():
                 # Slot it into the template
                 template = template.replace('[#' + key + '#]', value)
+            # Remove non-existing attributes
+            # template = re.sub(r"\[\#.*\#\]", "", template)
 
             # Now let's handle conditional text
             # Conditional text is an experimental feature.
@@ -322,55 +330,57 @@ def main():
             # This works with any attribute.
 
             for atteql, value, text in re.findall(r'\[(.*)=(.*?)\](.*)\[\/\1.*\]', template):
-                # Add equal sign to =
-                # atteql is the combination of the attribute and the equal sign
-                # If atteql was !, for (if not) then it would be !=, if it was nothing, it'd be =. absolute genius!!!
-                atteql += '='
-                # Get the attribute
-                attribute = atteql.replace('!=', '').replace('=', '')
-                # Get the equal sign
-                equals = atteql.replace(attribute, '')
+                # Get attribute to check
+                attribute = atteql
 
-                # Whether to display
+                # Check if ! is at the end ('not' conditional), trim from attribute
+                check_not = (atteql[-1] == "!")
+                if check_not:
+                    attribute = atteql[:-1]
+
+                # Note: at this stage all attributes will have been slotted in
+                # TODO: DeMorgan's Law, more rigorous testing
                 trigger = False
+                if check_not and value == "" and attribute in attribs.keys():
+                    # example: [bgcolor!=] style="background-color: #;"[/bgcolor!=]
+                    trigger = True
+                elif check_not and value == "" and attribute not in attribs.keys():
+                    trigger = False
+                elif not check_not and value == "" and attribute not in attribs.keys():
+                    # example: [ready=partial]<div class="noticebox"><p><img src="../icon_brick.png"> This page is a work in progress, but some content is available.</p></div>[/ready=]
+                    trigger = True
+                elif not check_not and value == "" and attribute in attribs.keys() and attribs[attribute] != "":
+                    # example: [ready=partial]<div class="noticebox"><p><img src="../icon_brick.png"> This page is a work in progress, but some content is available.</p></div>[/ready=]
+                    trigger = False
+                elif check_not and (attribute not in attribs.keys() or attribs[attribute] != value):
+                    # example: [pizza!=pepperoni]this is not a pepperoni pizza[/pizza!=]
+                    trigger = True
+                elif not check_not and attribute in attribs.keys() and attribs[attribute] == value:
+                    # example: [html_summary=]<p><i>HTML summary is empty</i></p>[/html_summary=]
+                    trigger = True
 
-                # For each attribute
-                for key, val in attribs.items():
-                    # If it's the one we're looking for
-                    if key == attribute:
-                        # If the value is equal
-                        if val == value:
-                            # Trigger
-                            trigger = True
-
-                # Check if we're going to display if it is NOT equal
-                if equals == '!=':
-                    # Reverse the trigger
-                    trigger = not trigger
-
+                conditional = '[' + atteql + "=" + value + ']' + text + '[/' + atteql + '=]'
                 # If triggered
                 if trigger:
                     # Set it to the text
-                    template = template.replace('[' + atteql + value + ']' + text + '[/' + atteql + ']', text)
+                    template = template.replace(conditional, text)
                 else:
                     # Make it blank
-                    template = template.replace('[' + atteql + value + ']' + text + '[/' + atteql + ']', '')
+                    template = template.replace(conditional, '')
 
-            # If this is a markdown file
+            # If this is a markdown file, trim the md from it and make the output extension html
             if path.endswith('.md'):
-                # Trim the md from it and make the output extension html
                 path = path[:-2] + 'html'
 
             # If prettifying is enabled, do that
             if prettify:
                 template = bs(template, 'html.parser').prettify()
 
-            # Check if there is a plugin directory
+            # Check if there is a plugin directory, for each plugin execute its code
             if Path('plugins/').is_dir():
-                # For each plugin
                 for plugin in os.listdir('plugins/'):
-                    # Execute the code inside
                     print(bcolors.BOLD + bcolors.WARNING + 'Running plugin', plugin + bcolors.ENDC)
+                    # TODO: use 'import' instead
                     lcls = locals()
                     ran = exec(open('plugins/' + plugin).read(), globals(), lcls)
                     template = lcls['template']
@@ -386,6 +396,7 @@ def main():
 
     # All files processed
     print(bcolors.BOLD + bcolors.HEADER + bcolors.OKGREEN + 'Finished.' + bcolors.ENDC)
+
     # Terminate to avoid repeats
     sys.exit()
 
