@@ -5,6 +5,8 @@ from commonmark import commonmark
 from dirsync import sync
 import os, time, shutil, subprocess, re, sys, argparse
 
+modified_format = "%m/%d/%Y"  # <-- Adjust this for other regions
+
 def main():
     # Default parameters
     # Set these and they will always be active whether parameters are passed or not
@@ -255,7 +257,7 @@ def main():
             attribs['path'] = path
             attribs['root'] = (('../' * path.count('/')) + slash).replace('//', '/')
             modified = os.path.getmtime('pages/' + path)
-            attribs['modified'] = time.strftime("%m/%d/%Y", time.localtime(modified))
+            attribs['modified'] = time.strftime(modified_format, time.localtime(modified))
             attribs['content'] = content
             # These attributes are set earlier so that they could be overriden if needed
             # (for example, setting the root attribute to / for a not found page 
