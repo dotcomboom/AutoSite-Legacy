@@ -5,15 +5,15 @@ from commonmark import commonmark
 from dirsync import sync
 import os, time, shutil, subprocess, re, sys, argparse
 
-modified_format = "%m/%d/%Y"  # <-- Adjust this for other regions
-
 def main():
     # Default parameters
     # Set these and they will always be active whether parameters are passed or not
     prettify = False
     auto = False
-    silent = False
+    quiet = False
     directory = False # Set to path
+    modified_format = "%m/%d/%Y"  # <-- Adjust this for other regions
+
 
     # Enable colors
     subprocess.call('', shell=True)
@@ -37,10 +37,12 @@ def main():
     
     # Define arguments, help
     parser = argparse.ArgumentParser(add_help=True)
-    parser.add_argument('-p', '--prettify', action='store_true', help='enables BeautifulSoup4 prettifying on output pages (may affect)')
-    parser.add_argument('-a', '--auto', action='store_true', help='skips user input, for use in scripts etc')
-    parser.add_argument('-s', '--silent', action='store_true', help='runs silently, skipping user input')
+    parser.add_argument('-p', '--prettify', action='store_true', help='enables BeautifulSoup4 prettifying on output pages (affects whitespace')
+    parser.add_argument('-a', '--auto', action='store_true', help='skips user input, for use in scripts etc; non-interactive mode')
+    parser.add_argument('-q', '--quiet', action='store_true', help='runs silently, skipping user input')
+    parser.add_argument('-s', '--silent', action='store_true', help='alias for --quiet')
     parser.add_argument('-d', '--dir', action='store', help='run AutoSite at a specific location')
+    parser.add_argument('-m', '--modified', action='store', help='specify date format for the [#modified#] attribute (Python-style; i.e. ﹪Y-﹪m-﹪d for 1984-01-19)')
     # Parse
     args = parser.parse_args()
 
@@ -48,13 +50,15 @@ def main():
         prettify = True
     if args.auto:
         auto = True
-    if args.silent:
-        silent = True
+    if args.quiet or args.silent:
+        quiet = True
     if args.dir:
         directory = args.dir
+    if args.modified:
+        modified_format = args.modified
     
     # Disable printing to console and enable auto mode with silent argument
-    if silent:
+    if quiet:
         sys.stdout = open(os.devnull, 'w')
         auto = True
 
