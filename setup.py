@@ -11,7 +11,7 @@ setuptools.setup(
     description="Keep all your website's pages under one template",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/dotcomboom/AutoSite",
+    url="https://github.com/dotcomboom/AutoSite-Legacy",
     packages=setuptools.find_packages(),
     install_requires=[
         'pathlib',
