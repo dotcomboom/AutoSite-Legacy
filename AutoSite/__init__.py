@@ -11,9 +11,11 @@ def main():
     prettify = False
     auto = False
     quiet = False
-    directory = False # Set to path
-    modified_format = "%m/%d/%Y"  # <-- Adjust this for other regions
-
+    directory = False   # Set to path
+    modified_format = "%Y-%m-%d"    # YYYY-MM-DD; follows ISO 8601; adjustable for other region as desired
+                                    # .NET AutoSite follows the system format upon build as of 1.0
+                                    #   (build flag (or alternate syntax) expected to be added to alter this behavior)
+                                    # Examples of valid Python dates at https://strfti.me
 
     # Enable colors
     subprocess.call('', shell=True)
@@ -37,12 +39,12 @@ def main():
     
     # Define arguments, help
     parser = argparse.ArgumentParser(add_help=True)
-    parser.add_argument('-p', '--prettify', action='store_true', help='enables BeautifulSoup4 prettifying on output pages (affects whitespace')
+    parser.add_argument('-p', '--prettify', action='store_true', help='enables BeautifulSoup4 prettifying on output pages (affects whitespace)')
     parser.add_argument('-a', '--auto', action='store_true', help='skips user input, for use in scripts etc; non-interactive mode')
     parser.add_argument('-q', '--quiet', action='store_true', help='runs silently, skipping user input')
     parser.add_argument('-s', '--silent', action='store_true', help='alias for --quiet')
     parser.add_argument('-d', '--dir', action='store', help='run AutoSite at a specific location')
-    parser.add_argument('-m', '--modified', action='store', help='specify date format for the [#modified#] attribute (Python-style; i.e. ﹪Y-﹪m-﹪d for 1984-01-19)')
+    parser.add_argument('-m', '--modified', action='store', help='specify date format for the [#modified#] attribute\n(strftime format; i.e. %%Y-%%m-%%d for 1984-01-19 or %%-m/%%-d/%%Y (*nix) or %%#m/%%#d/%%Y (Windows) for 1/19/1984)')
     # Parse
     args = parser.parse_args()
 
@@ -216,7 +218,7 @@ def main():
                 content = commonmark(content)
 
             # Default attributes
-            attribs = {'title': '', 'description': '', 'template': 'default'}
+            attribs = {'template': 'default'}
         
             # Handle legacy attributes (also known as a mess)
 
@@ -255,7 +257,7 @@ def main():
 
             # If there aren't any subdirectories between root and the file, use ./ as the slash so it doesn't refer to the root of the server for file:// compatibility
             if path.count('/') == 0:
-                slash = './'
+                slash = ''
             else:
                 slash = '/'
             attribs['path'] = path
