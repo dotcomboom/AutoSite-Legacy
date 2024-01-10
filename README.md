@@ -44,7 +44,7 @@ If your platform supports it, the GitHub Releases page has/will have prebuilt ex
     
 3. Run the script. How long it takes depends on how large your site is. Your pages will be in the "out" folder.
 
-Hungry for more? Try these helpful guides on how AutoSite works, contributed by [mariteaux](https://mariteaux.somnolescent.net):
+Hungry for more? Try these helpful guides on how AutoSite works, contributed by [mariteaux](http://mariteaux.somnolescent.net):
 - [The original AutoSite Legacy guide](http://archives.somnolescent.net/web/autosite_legacy/)
 - [The official AutoSite Manual](http://autosite.somnolescent.net/manual/)
 
