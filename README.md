@@ -89,6 +89,6 @@ Conditional text is not limited to just file paths! Nearly any attribute can be 
 As of 1.4, it is also possible to check for emptiness, like AutoSite (.NET). For example:
 
       [ready=]This page is not ready (its ready attribute is not set)[/ready=]
-      [subtitle!=]<h2>[#title#]</h2>[/subtitle!=]
+      [subtitle!=]<h2>[#subtitle#]</h2>[/subtitle!=]
 
 However, conditional text still has some limitations. You can only have one instance of conditional text per line, it is not nestable, and not multiline either.
