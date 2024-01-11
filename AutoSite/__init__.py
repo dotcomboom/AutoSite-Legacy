@@ -323,8 +323,9 @@ def main():
             for key, value in attribs.items():
                 # Slot it into the template
                 template = template.replace('[#' + key + '#]', value)
+            
             # Remove non-existing attributes
-            # template = re.sub(r"\[\#.*\#\]", "", template)
+            template = re.sub(r"\[\#.*\#\]", "", template)
 
             # Now let's handle conditional text
             # Conditional text is an experimental feature.
