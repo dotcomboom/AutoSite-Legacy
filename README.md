@@ -44,7 +44,7 @@ If your platform supports it, the GitHub Releases page has/will have prebuilt ex
     
 3. Run the script. How long it takes depends on how large your site is. Your pages will be in the "out" folder.
 
-Hungry for more? Try these helpful guides on how AutoSite works, contributed by [mariteaux](https://mariteaux.somnolescent.net):
+Hungry for more? Try these helpful guides on how AutoSite works, contributed by [mariteaux](http://mariteaux.somnolescent.net):
 - [The original AutoSite Legacy guide](http://archives.somnolescent.net/web/autosite_legacy/)
 - [The official AutoSite Manual](http://autosite.somnolescent.net/manual/)
 
@@ -89,6 +89,6 @@ Conditional text is not limited to just file paths! Nearly any attribute can be 
 As of 1.4, it is also possible to check for emptiness, like AutoSite (.NET). For example:
 
       [ready=]This page is not ready (its ready attribute is not set)[/ready=]
-      [subtitle!=]<h2>[#title#]</h2>[/subtitle!=]
+      [subtitle!=]<h2>[#subtitle#]</h2>[/subtitle!=]
 
 However, conditional text still has some limitations. You can only have one instance of conditional text per line, it is not nestable, and not multiline either.
