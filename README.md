@@ -3,7 +3,7 @@ AutoSite helps you keep all of your website's pages in the same basic template. 
 
 This repository is home to the original AutoSite Python script, updated to functional parity with its .NET-based sibling, [AutoSite](https://github.com/dotcomboom/AutoSite). AutoSite Legacy is cross-platform and aims to provide an elegant CLI option.
 
-- [PyPI package](https://pypi.org/project/AutoSite/) (currently out of date)
+- [PyPI package](https://pypi.org/project/AutoSite/)
 - [AutoSite Legacy GitHub](https://github.com/dotcomboom/AutoSite-Legacy/) (Python)
 - [AutoSite GitHub](https://github.com/dotcomboom/AutoSite/) (VB.NET)
 
