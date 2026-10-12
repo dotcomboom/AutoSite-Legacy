@@ -328,8 +328,6 @@ def main():
             template = re.sub(r"\[\#.*\#\]", "", template)
 
             # Now let's handle conditional text
-            # Conditional text is an experimental feature.
-            # Only one is supported per line because of some regex whatever, and stuff might make it trip up
             # Example:
 
             # [path!=pages/link.html]<a href="[#root#]pages/link.html">[/path!=]
@@ -338,7 +336,7 @@ def main():
             
             # This works with any attribute.
 
-            for atteql, value, text in re.findall(r'\[(.*)=(.*?)\](.*)\[\/\1.*\]', template):
+            for atteql, value, text in re.findall(r'(?s)\[(.*?)=(.*?)\](.*?)\[\/\1.{1,2}\]', template):
                 # Get attribute to check
                 attribute = atteql
 
