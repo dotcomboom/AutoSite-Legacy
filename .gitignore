@@ -1,1 +1,5 @@
+*.egg-info/
+build/
+*.whl
 .DS_Store
+Thumbs.db
